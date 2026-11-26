@@ -1,0 +1,354 @@
+/* Fixed on top so the hero can start underneath while the hello trail finishes fading */
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hello {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.hello path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hello-ink {
+  stroke: var(--color-coffee);
+  stroke-width: 15;
+}
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  /* photo size: up to 85.5% of the width or 76.5% of the height (image is 1325 x 683) */
+  --photo-w: min(85.5vw, calc(76.5vh * 1325 / 683));
+  --photo-h: calc(var(--photo-w) * 683 / 1325);
+}
+
+/* Name on the avatar, as in the owner's sketch: "LINGAM" at face level running behind the head,
+   cursive "meet" under it behind the neck, and "CHARAN" in front, lower and to the right.
+   Each word is positioned on its own (the h1 makes no stacking context) so LINGAM and meet can
+   sit under the photo and CHARAN over it. Each word is centred on a point given as a fraction
+   of the photo's box (--cx, --cy), so it keeps its spot on the body at any screen size. */
+.hero-name {
+  margin: 0;
+  color: var(--color-beige);
+  font-family: 'Anton', Impact, 'Arial Narrow', sans-serif;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.hero-name span {
+  position: absolute;
+  display: block;
+  white-space: nowrap;
+  left: calc(50% + var(--photo-w) * (var(--cx) - 0.5));
+  top: calc(100% - var(--photo-h) * (1 - var(--cy)));
+  translate: -50% -50%;
+  animation: name-in var(--name-time) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Cursive "meet" writes itself once the avatar has popped in (like "hello", not edge to edge).
+   Behind the avatar, under LINGAM, left of the neck: only its tail tucks behind, so it stays readable. */
+.hero-name .hero-meet {
+  --cx: 0.375;
+  --cy: 0.275;
+  width: calc(var(--photo-w) * 0.17);
+  z-index: 1;
+  animation: none;
+}
+
+.hero-meet svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.hero-meet path {
+  fill: none;
+  stroke: var(--color-coffee);
+  stroke-width: 11;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: meet-write var(--meet-time) cubic-bezier(0.65, 0, 0.35, 1) var(--meet-start) forwards;
+}
+
+@keyframes meet-write {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* LINGAM and CHARAN appear after "meet" is written */
+.hero-name .hero-first,
+.hero-name .hero-last {
+  font-size: calc(var(--photo-w) * 0.085);
+  letter-spacing: 0.03em;
+  animation-delay: var(--name-start);
+}
+
+/* Face level, left of the head: only the edge of the M tucks behind the head, so it stays readable */
+.hero-first {
+  --cx: 0.32;
+  --cy: 0.13;
+  z-index: 1;
+}
+
+/* In front of the avatar, below and to the right */
+.hero-last {
+  --cx: 0.624;
+  --cy: 0.455;
+  z-index: 3;
+}
+
+@keyframes name-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Photo sits on the bottom edge (it's cut at the waist), rises up from below and pops */
+.hero-photo {
+  display: block;
+  width: var(--photo-w);
+  height: auto;
+  position: relative;
+  z-index: 2;
+  transform-origin: bottom center;
+  animation: rise-pop var(--avatar-time) cubic-bezier(0.22, 1, 0.36, 1) var(--avatar-start) both;
+}
+
+@keyframes rise-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(100%) scale(0.9);
+  }
+  20% {
+    opacity: 1;
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(0) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* One continuous thread through the cards. It's drawn in two layers:
+   behind the photo (until it passes behind the left arm) and in front of it. */
+.thread {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.thread-back {
+  z-index: 1;
+}
+
+.thread-front {
+  z-index: 3;
+}
+
+/* Drawing is driven from JS (one eased motion across both layers) */
+.thread path {
+  fill: none;
+  stroke: var(--color-beige);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+
+/* "About me" placeholder cards */
+.card {
+  position: absolute;
+  translate: -50% -50%;
+  box-sizing: border-box;
+  width: clamp(140px, 13vw, 260px);
+  min-height: clamp(100px, 15vh, 170px);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--color-coffee);
+  border: 1.5px solid var(--color-beige);
+  border-radius: 14px;
+  color: var(--color-beige);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  z-index: 4;
+  opacity: 0;
+}
+
+/* Cards with a link: hover/focus lifts them with a glow (no transform: the pop animation owns scale) */
+.card-link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: box-shadow 160ms ease;
+}
+
+.card-link:hover,
+.card-link:focus-visible {
+  box-shadow: 0 8px 22px rgba(44, 24, 16, 0.45), 0 0 0 3px rgba(232, 211, 176, 0.35);
+  outline: none;
+}
+
+/* Added once the thread is measured; delay set inline so each card pops as the thread reaches it */
+.card-in {
+  animation: card-in 360ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.card-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0 0 10px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.card-img-contain {
+  object-fit: contain;
+  background: #fff;
+}
+
+.card-text {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+@keyframes card-in {
+  0% {
+    opacity: 0;
+    scale: 0.7;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+.hello-trail {
+  stroke: var(--color-beige);
+  stroke-width: 17;
+  opacity: 0;
+  filter: drop-shadow(0 0 10px rgba(232, 211, 176, 0.95));
+}
+
+/* "Let's connect" CTA at the top left: plain coffee-brown text on two lines, underlined by the
+   thread. Pops in like a card. */
+.cta {
+  position: absolute;
+  translate: -50% -50%;
+  z-index: 5;
+  opacity: 0;
+}
+
+.cta-button {
+  display: block;
+  padding: 0.05em 0.1em;
+  border: none;
+  background: none;
+  color: var(--color-coffee);
+  text-align: left;
+  font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(2.4rem, 3.6vw, 4.4rem);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.cta-button span {
+  display: block;
+}
+
+.cta-button:hover,
+.cta-open .cta-button {
+  color: var(--color-beige);
+}
+
+.cta-button:focus-visible,
+.cta-menu a:focus-visible {
+  outline: 2px solid var(--color-coffee);
+  outline-offset: 3px;
+}
+
+/* The menu hangs under the button; its top padding bridges the gap so hover doesn't drop */
+.cta-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding-top: 10px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 160ms ease, transform 160ms ease, visibility 0s linear 160ms;
+}
+
+.cta-open .cta-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 160ms ease, transform 160ms ease, visibility 0s;
+}
+
+.cta-menu ul {
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  min-width: 200px;
+  background: var(--color-coffee);
+  border: 1.5px solid var(--color-beige);
+  border-radius: 14px;
+}
+
+.cta-menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  color: var(--color-beige);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.cta-menu a:hover {
+  background: rgba(232, 211, 176, 0.14);
+}
+
+.cta-menu a:focus-visible {
+  outline-color: var(--color-beige);
+  outline-offset: -2px;
+}

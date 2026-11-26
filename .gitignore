@@ -1,15 +1,7 @@
 node_modules/
-push.ps1
-clean_background.cjs
-test_card.cjs
-test_card.js
-image copy*.png
-image*.png
-remove_bg.py
-screenshot.mjs
-serve.mjs
-mobile_screenshot.mjs
-mobile-view.png
-desktop-view.png
-mobile-menu-open.png
-.env
+dist/
+
+# kept local, not published
+picture/
+.claude/
+PROJECT.md
