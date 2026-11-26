@@ -22,7 +22,7 @@ const TRAIL_LENGTH = 400
 const CARDS = [
   { x: 7.5, y: 53, title: 'VLSI Engineering Student', img: collegeImg },
   { x: 27, y: 62, title: 'Content Creator', img: instaImg, contain: true, href: 'https://www.instagram.com/the_charan_way/' },
-  { x: 68.5, y: 89, title: 'AI Enthusiast', img: aiImg, href: 'https://github.com/charan-lingam?tab=repositories' }, // between the right arm and the waist
+  { x: 68.5, y: 89, title: 'AI Enthusiast', img: aiImg, href: 'https://github.com/charan-lingam/' }, // between the right arm and the waist
   { x: 88.5, y: 50, title: 'Founder: TapeoutX', img: tapeoutxImg, href: 'https://tapeoutx.vercel.app/' },
   { x: 77, y: 17, title: 'Video Editor', img: videoEditorImg, href: 'https://instagram.com/tapeoutx' },
 ]
